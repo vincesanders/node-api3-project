@@ -3,6 +3,8 @@ const express = require('express');
 const database = require('./userDb');
 const postDatabase = require('../posts/postDb');
 
+const errorHandler = require('../utils/errorHandler');
+
 const router = express.Router();
 
 router.post('/', validateUser, (req, res) => {
@@ -98,11 +100,6 @@ function validatePost(req, res, next) {
   } else {
     next();
   }
-}
-
-function errorHandler(error, status, message) {
-  console.log(error);
-  res.status(status).json({ errorMessage: message });
 }
 
 module.exports = router;
