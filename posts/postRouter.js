@@ -6,7 +6,6 @@ const errorHandler = require('../utils/errorHandler');
 const router = express.Router();
 
 router.get('/', (req, res) => {
-  // do your magic!
   database.get().then(posts => {
     res.status(200).json(posts);
   }).catch(err => {
@@ -19,7 +18,11 @@ router.get('/:id', validatePostId, (req, res) => {
 });
 
 router.delete('/:id', validatePostId, (req, res) => {
-  // do your magic!
+  database.remove(req.params.id).then(post => {
+    res.status(200).json(req.post);
+  }).catch(err => {
+    errorHandler(err, 500, 'The post could not be deleted.')
+  });
 });
 
 router.put('/:id', validatePostId, (req, res) => {
