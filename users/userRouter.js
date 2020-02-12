@@ -1,6 +1,7 @@
 const express = require('express');
 
 const database = require('./userDb');
+const postDatabase = require('../posts/postDb');
 
 const router = express.Router();
 
@@ -15,7 +16,16 @@ router.post('/', validateUser, (req, res) => {
 });
 
 router.post('/:id/posts', validatePost, validateUserId, (req, res) => {
-  // do your magic!
+  newPost = {
+    user_id: req.params.id,
+    text: req.body.text
+  }
+  postDatabase.insert(newPost).then(post => {
+    res.status(201).json(post);
+  }).catch(err => {
+    console.log(err);
+    res.status(500).json({ errorMessage: 'Could not post.' });
+});
 });
 
 router.get('/', (req, res) => {
