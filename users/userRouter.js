@@ -46,7 +46,17 @@ router.delete('/:id', validateUserId, (req, res) => {
 });
 
 router.put('/:id', validateUser, validateUserId, (req, res) => {
-  // do your magic!
+  database.update(req.params.id, req.body).then(userID => {
+    database.getById(req.params.id).then(user => {
+      res.status(200).json(user);
+    }).catch(err => {
+      console.log(err);
+      res.status(500).json({ errorMessage: "The user information could not be retrieved." });
+    });
+  }).catch(err => {
+      console.log(err);
+      res.status(500).json({ errorMessage: "The user information could not be modified." });
+  });
 });
 
 //custom middleware
