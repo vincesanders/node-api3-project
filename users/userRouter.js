@@ -10,8 +10,7 @@ router.post('/', validateUser, (req, res) => {
       //returns an object containing the id of the user just created.
       res.status(201).json(userIDObj);
   }).catch(err => {
-      console.log(err);
-      res.status(500).json({ errorMessage: 'oops' });
+    errorHandler(err, 500, 'Could not retrieve users.');
   });
 });
 
@@ -23,8 +22,7 @@ router.post('/:id/posts', validatePost, validateUserId, (req, res) => {
   postDatabase.insert(newPost).then(post => {
     res.status(201).json(post);
   }).catch(err => {
-    console.log(err);
-    res.status(500).json({ errorMessage: 'Could not post.' });
+    errorHandler(err, 500, 'Could not post.');
 });
 });
 
@@ -33,8 +31,7 @@ router.get('/', (req, res) => {
   database.get().then(users => {
     res.status(200).json(users);
   }).catch(err => {
-    console.log(err);
-    res.status(500).json({ errorMessage: "The users information could not be retrieved." });
+    errorHandler(err, 500, "The users information could not be retrieved.");
   });
 });
 
@@ -46,8 +43,7 @@ router.get('/:id/posts', validateUserId, (req, res) => {
   database.getUserPosts(req.params.id).then(post => {
     res.status(200).json(post);
   }).catch(err => {
-    console.log(err);
-    res.status(500).json({ errorMessage: "The user's posts could not be removed" });
+    errorHandler(err, 500, "The user's posts could not be removed");
   });
 });
 
@@ -55,8 +51,7 @@ router.delete('/:id', validateUserId, (req, res) => {
   database.remove(req.params.id).then(numDeleted => {
     res.status(200).json(req.user);
   }).catch(err => {
-    console.log(err);
-    res.status(500).json({ errorMessage: "The user could not be removed" });
+    errorHandler(err, 500, "The user could not be removed");
   });
 });
 
@@ -65,12 +60,10 @@ router.put('/:id', validateUser, validateUserId, (req, res) => {
     database.getById(req.params.id).then(user => {
       res.status(200).json(user);
     }).catch(err => {
-      console.log(err);
-      res.status(500).json({ errorMessage: "The user information could not be retrieved." });
+      errorHandler(err, 500, "The user information could not be retrieved.");
     });
   }).catch(err => {
-    console.log(err);
-    res.status(500).json({ errorMessage: "The user information could not be modified." });
+    errorHandler(err, 500, "The user information could not be modified.");
   });
 });
 
@@ -85,8 +78,7 @@ function validateUserId(req, res, next) {
       next();
     }
   }).catch(err => {
-      console.log(err);
-      res.status(500).json({ errorMessage: "The user information could not be retrieved." });
+    errorHandler(err, 500, "The user information could not be retrieved.");
   });
 }
 
@@ -108,6 +100,11 @@ function validatePost(req, res, next) {
   } else {
     next();
   }
+}
+
+function errorHandler(error, status, message) {
+  console.log(error);
+  res.status(status).json({ errorMessage: message });
 }
 
 module.exports = router;
