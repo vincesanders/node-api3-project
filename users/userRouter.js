@@ -6,9 +6,8 @@ const postDatabase = require('../posts/postDb');
 const router = express.Router();
 
 router.post('/', validateUser, (req, res) => {
-  database.insert(req.body).then(userIDObj => {
-      //returns an object containing the id of the user just created.
-      res.status(201).json(userIDObj);
+  database.insert(req.body).then(user => {
+      res.status(201).json(user);
   }).catch(err => {
     errorHandler(err, 500, 'Could not retrieve users.');
   });
@@ -27,7 +26,6 @@ router.post('/:id/posts', validatePost, validateUserId, (req, res) => {
 });
 
 router.get('/', (req, res) => {
-  // do your magic!
   database.get().then(users => {
     res.status(200).json(users);
   }).catch(err => {
