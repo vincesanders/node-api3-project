@@ -14,22 +14,31 @@ router.get('/', (req, res) => {
   });
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', validatePostId, (req, res) => {
+  res.status(200).json(req.post);
+});
+
+router.delete('/:id', validatePostId, (req, res) => {
   // do your magic!
 });
 
-router.delete('/:id', (req, res) => {
-  // do your magic!
-});
-
-router.put('/:id', (req, res) => {
+router.put('/:id', validatePostId, (req, res) => {
   // do your magic!
 });
 
 // custom middleware
 
 function validatePostId(req, res, next) {
-  // do your magic!
+  database.getById(req.params.id).then(post => {
+    if (!post) {
+      res.status(400).json({ message: "invalid post id" });
+    } else {
+      req.post = post;
+      next();
+    }
+  }).catch(err => {
+    errorHandler(err, 500, "Could not get post. Check the post id.")
+  })
 }
 
 module.exports = router;
