@@ -2,6 +2,7 @@ const express = require('express');
 const database = require('./postDb');
 
 const errorHandler = require('../utils/errorHandler');
+const { validatePost } = require('../users/userRouter');
 
 const router = express.Router();
 
@@ -25,8 +26,13 @@ router.delete('/:id', validatePostId, (req, res) => {
   });
 });
 
-router.put('/:id', validatePostId, (req, res) => {
-  // do your magic!
+router.put('/:id', validatePost, validatePostId, (req, res) => {
+  const updatedPost = {...req.post, text: req.body.text};
+  database.update(req.params.id, updatedPost).then(post => {
+    res.status(200).json(updatedPost);
+  }).catch(err => {
+    errorHandler(err, 500, "Could not save changes to post.");
+  });
 });
 
 // custom middleware
