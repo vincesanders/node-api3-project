@@ -33,7 +33,12 @@ router.get('/:id', validateUserId, (req, res) => {
 });
 
 router.get('/:id/posts', validateUserId, (req, res) => {
-  // do your magic!
+  database.getUserPosts(req.params.id).then(post => {
+    res.status(200).json(post);
+  }).catch(err => {
+    console.log(err);
+    res.status(500).json({ errorMessage: "The user's posts could not be removed" });
+  });
 });
 
 router.delete('/:id', validateUserId, (req, res) => {
@@ -54,8 +59,8 @@ router.put('/:id', validateUser, validateUserId, (req, res) => {
       res.status(500).json({ errorMessage: "The user information could not be retrieved." });
     });
   }).catch(err => {
-      console.log(err);
-      res.status(500).json({ errorMessage: "The user information could not be modified." });
+    console.log(err);
+    res.status(500).json({ errorMessage: "The user information could not be modified." });
   });
 });
 
